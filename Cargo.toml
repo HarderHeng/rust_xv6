@@ -1,24 +1,12 @@
 [package]
-name = "riscv32-hello-rust"
+name = "qemu-rv32-hello"
 version = "0.1.0"
 edition = "2021"
 
-# 禁用标准库
 [dependencies]
-# 无依赖（裸机）
-
-# 目标：裸机 RISC-V32
-[package.metadata.docs.rs]
-targets = []
-
-[[bin]]
-name = "riscv32-hello-rust"
-path = "src/main.rs"
 
 [profile.dev]
 panic = "abort"
 
 [profile.release]
 panic = "abort"
-lto = true
-codegen-units = 1

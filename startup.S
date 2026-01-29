@@ -1,14 +1,21 @@
-.section .text._start
+# startup.s
+.section .text.boot
 .global _start
 
 _start:
-    # 设置栈指针：QEMU virt 的 DRAM 从 0x80000000 开始，分配 16KB 栈
-    li sp, 0x80000000 + 0x4000
+    # 设置栈指针（SP）到 RAM 高地址
+    # QEMU virt 机器的 RAM 起始于 0x80000000，大小通常为 128MB
+    la sp, _stack_top
 
-    # 直接跳转到 Rust 主函数
-    call rust_main
+    # 跳转到 Rust main 函数
+    jal ra, main
 
-    # 如果返回（不应该），进入死循环
+    # 如果 main 返回，则进入死循环
 hang:
-    wfi
     j hang
+
+.section .bss
+.align 4
+_stack_bottom:
+    .skip 4096   # 4KB 栈空间
+_stack_top:

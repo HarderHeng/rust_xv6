@@ -1,16 +1,30 @@
+// main.rs
 #![no_std]
 #![no_main]
 
-// HTIF 的 to-host 地址（QEMU virt 特有）
-const TO_HOST: *mut u64 = 0x80001000 as *mut u64;
+use core::panic::PanicInfo;
+
+// 定义 UART0 基地址（QEMU virt 机器）
+const UART0: usize = 0x10000000;
+const UART_THR: usize = UART0 + 0x00; // Transmit Holding Register
 
 #[no_mangle]
-pub extern "C" fn rust_main() -> ! {
-    // HTIF putchar 协议：cmd=1, data=char
-    unsafe {
-        for &c in b"Hello via HTIF!\n" {
-            TO_HOST.write_volatile(0x01 | ((c as u64) << 8));
-        }
+extern "C" fn main() -> ! {
+    let hello = b"Hello, World!\r\n";
+    for &byte in hello {
+        uart_putc(byte);
     }
+
+    loop {}
+}
+
+fn uart_putc(byte: u8) {
+    unsafe {
+        core::ptr::write_volatile(UART_THR as *mut u8, byte);
+    }
+}
+
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }

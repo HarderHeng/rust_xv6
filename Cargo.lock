@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "riscv32-hello-rust"
+name = "qemu-rv32-hello"
 version = "0.1.0"
